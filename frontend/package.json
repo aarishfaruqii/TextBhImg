@@ -3,14 +3,14 @@
   "@chakra-ui/react": "^2.10.7",
   "@emotion/react": "^11.14.0",
   "@emotion/styled": "^11.14.0",
-  "@mui/material": "^5.15.13", // Example: Add or ensure this is present
+  "@mui/material": "^5.15.13",
   "@react-three/drei": "^10.0.6",
   "@react-three/fiber": "^9.1.2",
   "framer-motion": "^10.18.0",
   "html2canvas": "^1.4.1",
-  "react": "^18.2.0",      // Example: Ensure compatible version
+  "react": "^18.2.0",     
   "react-color": "^2.19.3",
-  "react-dom": "^18.2.0",  // Example: Ensure compatible version
+  "react-dom": "^18.2.0",  
   "react-draggable": "^4.4.6",
   "react-dropzone": "^14.3.8",
   "react-icons": "^5.5.0",
@@ -23,7 +23,7 @@
   "@types/react": "^18.2.15",
   "@types/react-dom": "^18.2.7",
   "@vitejs/plugin-react": "^4.0.3",
-  "eslint": "^8.45.0",        // Example: Add if missing based on errors
+  "eslint": "^8.45.0",
   "eslint-plugin-react": "^7.32.2",
   "eslint-plugin-react-hooks": "^4.6.0",
   "eslint-plugin-react-refresh": "^0.4.3",
