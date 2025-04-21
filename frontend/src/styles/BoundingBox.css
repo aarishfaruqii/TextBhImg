@@ -1,0 +1,412 @@
+.bounding-box-container {
+  position: absolute;
+  cursor: move;
+  user-select: none;
+  transform-origin: center center;
+  will-change: transform;
+  pointer-events: auto;
+}
+
+.bounding-box {
+  position: relative;
+  box-sizing: border-box;
+  cursor: move;
+  user-select: none;
+  border-radius: 4px;
+  border: 1px solid rgba(61, 106, 255, 0.7);
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  min-width: 40px;
+  min-height: 40px;
+  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+  will-change: width, height, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  box-shadow: 0 0 0 1px rgba(61, 106, 255, 0.3);
+}
+
+.text-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  position: relative;
+  min-width: 40px;
+  min-height: 24px;
+  transition: opacity 0.1s ease-out;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border: 1px solid rgba(61, 106, 255, 0.8);
+  border-radius: 50%;
+  z-index: 10;
+  touch-action: none;
+  transition: all 0.2s ease;
+}
+
+.resize-handle:hover {
+  background-color: #805AD5;
+  transform: scale(1.2);
+}
+
+.resize-handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+.resize-handle-n  { top: -5px; left: calc(50% - 5px); cursor: ns-resize; }
+.resize-handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+.resize-handle-e  { top: calc(50% - 5px); right: -5px; cursor: ew-resize; }
+.resize-handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+.resize-handle-s  { bottom: -5px; left: calc(50% - 5px); cursor: ns-resize; }
+.resize-handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+.resize-handle-w  { top: calc(50% - 5px); left: -5px; cursor: ew-resize; }
+
+/* Rotation handle */
+.rotation-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background-color: white;
+  border: 1px solid rgba(61, 106, 255, 0.8);
+  border-radius: 50%;
+  z-index: 11;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.rotation-handle::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: 2px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Hover effects */
+.bounding-box:hover {
+  border-color: rgba(61, 106, 255, 0.9);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Active state */
+.bounding-box.active {
+  border: 1px solid rgba(128, 90, 213, 0.8);
+  box-shadow: 0 0 0 1px rgba(128, 90, 213, 0.4);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Grid styles */
+.grid-layer {
+  pointer-events: none;
+}
+
+/* Snap indicators */
+.snap-point {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background-color: rgba(128, 90, 213, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Layer styles */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Bottom layer */
+  object-fit: contain;
+}
+
+.text-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* Middle layer */
+  pointer-events: none;
+}
+
+.text-layer > * {
+  pointer-events: auto;
+}
+
+.subject-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3; /* Top layer */
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Hide bounding box during export */
+.bounding-box-container.exporting .bounding-box {
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.bounding-box-container.exporting .resize-handle,
+.bounding-box-container.exporting .rotation-handle,
+.bounding-box-container.exporting .measurement-overlay {
+  display: none;
+}
+
+/* Measurement overlay */
+.measurement-overlay {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(128, 90, 213, 0.5);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.2s ease-out;
+}
+
+/* Text element in the box should be positioned with respect to the container */
+.text-container .chakra-text {
+  display: inline-block;
+  transition: color 0.3s, font-size 0.3s, font-family 0.3s;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+}
+
+/* Stretching mode styles */
+.bounding-box-container.resizing .bounding-box {
+  border-color: rgba(129, 230, 217, 0.8);
+  box-shadow: 0 0 0 1px rgba(129, 230, 217, 0.4);
+}
+
+.bounding-box-container.resizing .resize-handle {
+  border-color: rgba(129, 230, 217, 0.8);
+  background-color: rgba(129, 230, 217, 0.6);
+}
+
+.bounding-box-container.resizing::after {
+  content: "Proportional Resize (Shift)";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: cyan;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* Improve performance for dragging operations */
+.react-draggable-dragging {
+  transition: none !important;
+  will-change: transform;
+}
+
+/* Enhanced visual styling for snapping effects */
+.bounding-box.snapping {
+  border-color: rgba(0, 255, 128, 0.9);
+  box-shadow: 0 0 8px 1px rgba(0, 255, 128, 0.5);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: snap-pulse 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Specific styles for horizontal snapping */
+.bounding-box.snapping-h {
+  border-top-color: rgba(255, 196, 0, 0.9);
+  border-bottom-color: rgba(255, 196, 0, 0.9);
+  box-shadow: 0 0 8px 1px rgba(255, 196, 0, 0.5);
+}
+
+/* Specific styles for vertical snapping */
+.bounding-box.snapping-v {
+  border-left-color: rgba(255, 196, 0, 0.9);
+  border-right-color: rgba(255, 196, 0, 0.9);
+  box-shadow: 0 0 8px 1px rgba(255, 196, 0, 0.5);
+}
+
+/* When both horizontal and vertical snapping are active */
+.bounding-box.snapping-h.snapping-v {
+  border-color: rgba(255, 128, 0, 0.9);
+  box-shadow: 0 0 12px 2px rgba(255, 128, 0, 0.6);
+}
+
+/* Enhanced handle styles during snapping */
+.bounding-box.snapping .resize-handle {
+  background-color: rgba(0, 255, 128, 0.9);
+  border-color: white;
+  transform: scale(1.2);
+  box-shadow: 0 0 4px rgba(0, 255, 128, 0.7);
+}
+
+.bounding-box.snapping-h .resize-handle.n,
+.bounding-box.snapping-h .resize-handle.s {
+  background-color: rgba(255, 196, 0, 0.9);
+  box-shadow: 0 0 4px rgba(255, 196, 0, 0.7);
+}
+
+.bounding-box.snapping-v .resize-handle.e,
+.bounding-box.snapping-v .resize-handle.w {
+  background-color: rgba(255, 196, 0, 0.9);
+  box-shadow: 0 0 4px rgba(255, 196, 0, 0.7);
+}
+
+/* Enhanced rotation handle during snapping */
+.bounding-box.snapping .rotation-handle {
+  background-color: rgba(0, 255, 128, 0.9);
+  border-color: white;
+  transform: translateX(-50%) scale(1.2);
+  box-shadow: 0 0 4px rgba(0, 255, 128, 0.7);
+}
+
+/* Center guide styles */
+.center-guide {
+  position: absolute;
+  background-color: rgba(61, 106, 255, 0.3);
+  z-index: 1;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.horizontal-guide {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.vertical-guide {
+  height: 100%;
+  width: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Enhanced guide styles when snapping occurs */
+.horizontal-guide.snapping {
+  background-color: rgba(255, 196, 0, 0.7);
+  height: 2px;
+  box-shadow: 0 0 4px rgba(255, 196, 0, 0.5);
+  animation: line-pulse 0.8s infinite;
+}
+
+.vertical-guide.snapping {
+  background-color: rgba(255, 196, 0, 0.7);
+  width: 2px;
+  box-shadow: 0 0 4px rgba(255, 196, 0, 0.5);
+  animation: line-pulse 0.8s infinite;
+}
+
+/* Enhanced center guide layer for better visual feedback */
+.center-guide-layer {
+  opacity: 0;
+  background: 
+    linear-gradient(to right, transparent calc(50% - 1px), rgba(61, 106, 255, 0.1) calc(50% - 1px), rgba(61, 106, 255, 0.1) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(to bottom, transparent calc(50% - 1px), rgba(61, 106, 255, 0.1) calc(50% - 1px), rgba(61, 106, 255, 0.1) calc(50% + 1px), transparent calc(50% + 1px));
+  transition: opacity 0.3s ease;
+}
+
+.center-guide-layer.active {
+  opacity: 0.5;
+}
+
+.center-guide-layer.snapping {
+  opacity: 0.8;
+  background: 
+    linear-gradient(to right, transparent calc(50% - 1px), rgba(255, 196, 0, 0.3) calc(50% - 1px), rgba(255, 196, 0, 0.3) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(to bottom, transparent calc(50% - 1px), rgba(255, 196, 0, 0.3) calc(50% - 1px), rgba(255, 196, 0, 0.3) calc(50% + 1px), transparent calc(50% + 1px));
+  animation: guide-pulse 1s infinite;
+}
+
+/* Animation keyframes for the snapping effect */
+@keyframes snap-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.5);
+  }
+  50% {
+    transform: scale(1.01);
+    box-shadow: 0 0 10px 2px rgba(0, 255, 128, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.5);
+  }
+}
+
+/* Animation for guideline pulses */
+@keyframes line-pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+/* Animation for the center guide layer */
+@keyframes guide-pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.bounding-box.grid-snapping {
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+  border-color: rgba(0, 255, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: grid-snap-pulse 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes grid-snap-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 8px 6px rgba(0, 255, 0, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 4px 2px rgba(0, 255, 0, 0);
+  }
+}
