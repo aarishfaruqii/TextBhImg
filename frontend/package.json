@@ -16,8 +16,6 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^5.15.13",
     "@react-three/drei": "^8.8.6",
-    
-    
     "@react-three/fiber": "^9.1.2",
     "framer-motion": "^10.18.0",
     "html2canvas": "^1.4.1",
