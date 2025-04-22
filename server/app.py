@@ -152,11 +152,9 @@ def process_image():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=4000, help='Port to run the server on')
-    args = parser.parse_args()
-    
-    print(f"Starting server on port {args.port}")
-    app.run(debug=True, port=args.port, threaded=True)
+    # Get port from environment variable, default to 5000 if not found
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port) # Use 0.0.0.0 to listen on all interfaces
+
 
     
