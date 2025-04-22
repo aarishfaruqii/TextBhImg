@@ -16,7 +16,7 @@
     "@emotion/styled": "^11.14.0",
     "@react-three/drei": "^10.0.6",
     "@react-three/fiber": "^9.1.2",
-    "framer-motion": "^10.18.0",
+    "framer-motion": "^18.2.0",
     "html2canvas": "^1.4.1",
     "react": "^19.1.0",
     "react-color": "^2.19.3",
