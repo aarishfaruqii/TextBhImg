@@ -19,7 +19,7 @@
     "@react-three/fiber": "^9.1.2",
     "framer-motion": "^10.18.0",
     "html2canvas": "^1.4.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-color": "^2.19.3",
     "react-draggable": "^4.4.6",
