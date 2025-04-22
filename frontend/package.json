@@ -1,22 +1,22 @@
 {
-  "name": "textbh-img", 
-  "version": "0.0.0",      
-  "private": true,         
-  "type": "module",        
-  "scripts": {             
+  "name": "textbh-img",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {  
+  "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.10.7",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^5.15.13",
-    "@react-three/drei": "^8.8.6", 
-    "@react-three/fiber": "^9.1.2",  
+    "@react-three/drei": "^8.8.6",
+    "@react-three/fiber": "^9.1.2",
     "framer-motion": "^10.18.0",
     "html2canvas": "^1.4.1",
     "react": "^18.2.0",
@@ -30,7 +30,7 @@
     "three": "^0.175.0",
     "webfontloader": "^1.6.28"
   },
-  "devDependencies": { 
+  "devDependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
