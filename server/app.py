@@ -154,7 +154,6 @@ def process_image():
 if __name__ == '__main__':
     # Get port from environment variable, default to 5000 if not found
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port) # Use 0.0.0.0 to listen on all interfaces
-
+    
 
     
