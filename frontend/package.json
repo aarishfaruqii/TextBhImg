@@ -1,6 +1,7 @@
 {
   "name": "textbhimage",
   "private": true,
+  "proxy":"https://imageprocessor-zjzc.onrender.com"
   "version": "0.0.0",
   "type": "module",
   "scripts": {
