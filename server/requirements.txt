@@ -11,7 +11,6 @@ click
 coloredlogs
 cssselect2
 defusedxml
-diffusers
 dnspython
 filelock
 Flask
@@ -20,7 +19,6 @@ Flask-Migrate
 Flask-SQLAlchemy
 flatbuffers
 fsspec
-huggingface-hub
 humanfriendly
 idna
 imageio
@@ -36,8 +34,6 @@ networkx
 numba
 numpy
 onnxruntime
-opencv-python
-opencv-python-headless
 packaging
 pillow
 platformdirs
@@ -52,11 +48,8 @@ python-dotenv
 PyYAML
 referencing
 regex
-rembg
 requests
 rpds-py
-safetensors
-scikit-image
 scipy
 setuptools
 sql
@@ -65,11 +58,6 @@ sympy
 tenacity
 tifffile
 tinycss2
-tokenizers
-torch
-torchvision
-tqdm
-transformers
 typing_extensions
 urllib3
 webencodings
