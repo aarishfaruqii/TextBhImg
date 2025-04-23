@@ -28,7 +28,6 @@ importlib_metadata
 itsdangerous
 Jinja2
 jsonschema
-lazy_loader
 llvmlite
 Mako
 MarkupSafe
