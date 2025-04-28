@@ -76,6 +76,7 @@ def fast_remove_background(img):
 
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
+    print("Received request")
     try:
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
