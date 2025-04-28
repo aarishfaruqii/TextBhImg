@@ -155,10 +155,9 @@ function Editor() {
           const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
           
           const response = await fetch('https://imageprocessor-zjzc.onrender.com/api/process-image', {
-            method: 'POST',
-            body: formData,
-            signal: controller.signal
-          })
+          method: 'POST',
+          body: formData,
+          });  
           
           clearTimeout(timeoutId);
 
