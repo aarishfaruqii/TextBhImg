@@ -10,7 +10,7 @@ import cv2
 import argparse
 import threading
 from concurrent.futures import ThreadPoolExecutor
-import traceback # This line is correct
+import traceback
 
 app = Flask(__name__)
 CORS(app)
