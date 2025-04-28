@@ -64,3 +64,8 @@ webencodings
 Werkzeug
 zipp
 gunicorn
+Flask
+Flask-Cors
+Pillow
+rembg
+opencv-python
