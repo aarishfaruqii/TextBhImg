@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
+import tracebackfrom flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
 import io
@@ -147,11 +148,11 @@ def process_image():
         
         return response
     
-    except Exception as e:
-        import traceback
-        error_message = f"Error processing image: {str(e)}\n{traceback.format_exc()}"
-        print(error_message)  # Log to console (and Render logs)
-        return jsonify({'error': error_message}), 500
+        except Exception as e:
+            error_message = f"Error processing image: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)  # Log to console (and Render logs)
+            return jsonify({'error': error_message}), 500
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
