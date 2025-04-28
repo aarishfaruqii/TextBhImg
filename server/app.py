@@ -148,12 +148,15 @@ def process_image():
         return response
     
     except Exception as e:
-        print(f"Error processing image: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        import traceback
+        error_message = f"Error processing image: {str(e)}\n{traceback.format_exc()}"
+        print(error_message)  # Log to console (and Render logs)
+        return jsonify({'error': error_message}), 500
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=4000, help='Port to run the server on')
+    args = parser.parse_args()
     
-
-    
+    print(f"Starting server on port {args.port}")
+    app.run(debug=True, port=args.port, threaded=True)
