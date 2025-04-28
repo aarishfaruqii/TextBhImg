@@ -1,6 +1,4 @@
-from flask import Flask, request, jsonify
-import tracebackfrom 
-import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
 import io
@@ -12,6 +10,7 @@ import cv2
 import argparse
 import threading
 from concurrent.futures import ThreadPoolExecutor
+import traceback # This line is correct
 
 app = Flask(__name__)
 CORS(app)
@@ -150,10 +149,10 @@ def process_image():
         
         return response
     
-        except Exception as e:
-            error_message = f"Error processing image: {str(e)}\n{traceback.format_exc()}"
-            print(error_message)  # Log to console (and Render logs)
-            return jsonify({'error': error_message}), 500
+    except Exception as e:
+        error_message = f"Error processing image: {str(e)}\n{traceback.format_exc()}"
+        print(error_message)  # Log to console (and Render logs)
+        return jsonify({'error': error_message}), 500
 
 
 if __name__ == '__main__':
