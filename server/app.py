@@ -10,7 +10,7 @@ import cv2
 import argparse
 import threading
 from concurrent.futures import ThreadPoolExecutor
-import traceback  # This line is correct
+import traceback
 
 app = Flask(__name__)
 CORS(app)
@@ -56,6 +56,7 @@ def optimize_image_size(img, max_size=1200):
     return img, 1.0
 
 
+
 def fast_remove_background(img):
     """Optimized background removal with faster settings."""
     try:
@@ -86,6 +87,7 @@ def fast_remove_background(img):
     return Image.fromarray(output_array)
 
 
+
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
     print("Received request")
@@ -94,7 +96,7 @@ def process_image():
             return jsonify({'error': 'No image file provided'}), 400
 
         file = request.files['image']
-        print(f"File received: {file.filename}, size: {len(file.read())}") #log file name and size
+        print(f"File received: {file.filename}, size: {len(file.read())}")  # log file name and size
 
         try:
             img = Image.open(file.stream)
@@ -155,9 +157,9 @@ def process_image():
             final_output = Image.new('RGBA', (original_width, original_height),
                                      (0, 0, 0, 0))
         except Exception as e:
-                error_message = f"Error creating new image: {str(e)}\n{traceback.format_exc()}"
-                print(error_message)
-                return jsonify({'error': error_message}), 500
+            error_message = f"Error creating new image: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)
+            return jsonify({'error': error_message}), 500
 
         # Paste the processed image exactly centered on the canvas
         paste_x = (original_width - processed_image.width) // 2
@@ -211,13 +213,9 @@ def process_image():
         return jsonify({'error': error_message}), 500
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--port', type=int, default=4000,
-                        help='Port to run the server on')
-    args = parser.parse_args()
 
-    # Use the PORT environment variable if available, otherwise use the default
-    port = int(os.environ.get('PORT', args.port))  # change here
+if __name__ == '__main__':
+    # Use the PORT environment variable if available, default to 5000 if not set.
+    port = int(os.environ.get('PORT', 5000))
     print(f"Starting server on port {port}")
-    app.run(debug=True, port=port, threaded=True)
+    app.run(host='0.0.0.0', port=port, threaded=True)
