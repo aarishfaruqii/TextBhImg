@@ -32,6 +32,7 @@ image_cache = {}
 def optimize_image_size(img, max_size=1200):
     """Resize large images for faster processing while maintaining quality."""
     width, height = img.size
+    print(f"Original image size: {width} x {height}")  # Add logging
     if max(width, height) > max_size:
         # Calculate new dimensions while preserving aspect ratio
         if width > height:
@@ -41,9 +42,13 @@ def optimize_image_size(img, max_size=1200):
             new_height = max_size
             new_width = int(width * (max_size / height))
 
+        print(f"Resizing to: {new_width} x {new_height}")  # Add logging
         # Resize for processing
-        img_resized = img.resize((new_width, new_height), Image.LANCZOS)
-
+        try:
+            img_resized = img.resize((new_width, new_height), Image.LANCZOS)
+        except Exception as e:
+            print(f"Error during resize: {e}")
+            raise
         # Return resized image and scale factor for later upscaling
         scale_factor = width / new_width  # or height / new_height
         return img_resized, scale_factor
@@ -53,12 +58,16 @@ def optimize_image_size(img, max_size=1200):
 
 def fast_remove_background(img):
     """Optimized background removal with faster settings."""
-    # Process with optimized settings (less alpha matting for speed)
-    output = remove(
-        img,
-        alpha_matting=False,  # Turn off alpha matting for speed
-        post_process_mask=True  # Enable built-in post-processing
-    )
+    try:
+        # Process with optimized settings (less alpha matting for speed)
+        output = remove(
+            img,
+            alpha_matting=False,  # Turn off alpha matting for speed
+            post_process_mask=True  # Enable built-in post-processing
+        )
+    except Exception as e:
+        print(f"Error during rembg.remove: {e}")
+        raise
 
     # Fast alpha channel cleanup
     output_array = np.array(output)
@@ -85,11 +94,19 @@ def process_image():
             return jsonify({'error': 'No image file provided'}), 400
 
         file = request.files['image']
-        img = Image.open(file.stream)
+        print(f"File received: {file.filename}, size: {len(file.read())}") #log file name and size
+
+        try:
+            img = Image.open(file.stream)
+        except Exception as e:
+            error_message = f"Error opening image: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)
+            return jsonify({'error': error_message}), 400
 
         # Store original image dimensions
         original_width = img.width
         original_height = img.height
+        print(f"Original dimensions: {original_width} x {original_height}")
 
         # Calculate a hash of the image data for caching
         file.stream.seek(0)
@@ -107,30 +124,61 @@ def process_image():
         original_img_str = base64.b64encode(original_buffer.getvalue()).decode('utf-8')
 
         # Optimize size for faster processing
-        processing_img, scale_factor = optimize_image_size(img)
+        try:
+            processing_img, scale_factor = optimize_image_size(img)
+        except Exception as e:
+            error_message = f"Error optimizing image size: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)
+            return jsonify({'error': error_message}), 500
 
         # Fast background removal
-        processed_image = fast_remove_background(processing_img)
+        try:
+            processed_image = fast_remove_background(processing_img)
+        except Exception as e:
+            error_message = f"Error removing background: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)
+            return jsonify({'error': error_message}), 500
 
         # Scale back to original size if needed
         if scale_factor != 1.0:
-            processed_image = processed_image.resize(
-                (original_width, original_height), Image.LANCZOS)
+            print(f"Scaling back with factor: {scale_factor}")
+            try:
+                processed_image = processed_image.resize(
+                    (original_width, original_height), Image.LANCZOS)
+            except Exception as e:
+                error_message = f"Error scaling back image: {str(e)}\n{traceback.format_exc()}"
+                print(error_message)
+                return jsonify({'error': error_message}), 500
 
         # Create a new image with the exact original dimensions
-        final_output = Image.new('RGBA', (original_width, original_height),
-                                 (0, 0, 0, 0))
+        try:
+            final_output = Image.new('RGBA', (original_width, original_height),
+                                     (0, 0, 0, 0))
+        except Exception as e:
+                error_message = f"Error creating new image: {str(e)}\n{traceback.format_exc()}"
+                print(error_message)
+                return jsonify({'error': error_message}), 500
 
         # Paste the processed image exactly centered on the canvas
         paste_x = (original_width - processed_image.width) // 2
         paste_y = (original_height - processed_image.height) // 2
-        final_output.paste(processed_image, (paste_x, paste_y),
-                           processed_image)
+        try:
+            final_output.paste(processed_image, (paste_x, paste_y),
+                                    processed_image)
+        except Exception as e:
+            error_message = f"Error pasting image: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)
+            return jsonify({'error': error_message}), 500
 
         # Create a buffer to store the processed image
         subject_buffer = io.BytesIO()
-        final_output.save(subject_buffer, format='PNG',
-                         quality=95)  # Slightly reduced quality for speed
+        try:
+            final_output.save(subject_buffer, format='PNG',
+                            quality=95)  # Slightly reduced quality for speed
+        except Exception as e:
+            error_message = f"Error saving to buffer: {str(e)}\n{traceback.format_exc()}"
+            print(error_message)
+            return jsonify({'error': error_message}), 500
         subject_buffer.seek(0)
 
         # Convert to base64 for sending to frontend
